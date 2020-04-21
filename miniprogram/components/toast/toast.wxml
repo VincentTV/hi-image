@@ -1,8 +1,0 @@
-<!--components/toast/toast.wxml-->
-<view class="fadeIn {{hideToast ? 'fadeOut' : ''}}" wx:if="{{showToast}}">
-  <view class="weui-mask_transparent"></view>
-  <view class="weui-toast">
-    <icon color="rgba(255,255,255,.9)" type="{{type}}" size="55"/>
-    <view class="weui-toast__content"><slot /></view>
-  </view>
-</view>

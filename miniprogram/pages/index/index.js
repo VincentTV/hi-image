@@ -6,8 +6,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    originalPath: '',
-    successToast: false
+    originalPath: ''
   },
 
   upload: function () {
@@ -26,8 +25,12 @@ Page({
       })
       // 图片显示
       .then(res => {
+        wx.showToast({
+          title: '上传成功',
+          icon: 'success',
+          duration: 1500
+        })
         this.setData({
-          successToast: true,
           originalPath: res.fileID
         })
       })

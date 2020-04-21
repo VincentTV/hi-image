@@ -28,7 +28,3 @@
     </view>
   </view>
 </view>
-
-<my-toast show-toast="{{successToast}}" duration="{{1000}}" type="success_no_circle">
-  上传成功
-</my-toast>
