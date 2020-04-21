@@ -1,11 +1,46 @@
 // miniprogram/pages/index/index.js
+import { promisifyAll } from 'miniprogram-api-promise';
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    originalPath: '',
+    successToast: false
+  },
 
+  upload: function () {
+    const wxp = {}
+    promisifyAll(wx, wxp)
+    wxp
+      // 选择图片
+      .chooseImage({ count: 1 })
+      // 图片上传云存储
+      .then(res=>{
+        const cloudFile = Math.floor(Math.random() * 1000000) + /\.[^\.]+$/.exec(res.tempFilePaths[0])
+        return wx.cloud.uploadFile({
+          cloudPath: `original-images/${cloudFile}`,
+          filePath: res.tempFilePaths[0]
+        })
+      })
+      // 图片显示
+      .then(res => {
+        this.setData({
+          successToast: true,
+          originalPath: res.fileID
+        })
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+  },
+
+  display() {
+    this.setData({
+      successToast: true
+    })
   },
 
   /**
