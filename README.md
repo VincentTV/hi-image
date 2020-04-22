@@ -1,24 +1,25 @@
 # Hi-image 小程序
 
-微信小程序云开发，实现自动头像戴口罩功能。
+微信小程序云开发，人脸智能裁剪。
 
 ## 主要功能
 
-* 智能识别人脸，进行五官定位
-* 支持多人识别
-* 支持添加加油图片
+* 图片上传云存储
+* 图片安全审核
+* 人脸智能裁剪
 
 ## 目录结构
 
 ```bash
 │  .gitignore          # git忽略文件
 │  LICENSE             # 开源许可
-│  package-lock.json   # 项目配置
-│  package.json        # 项目配置
+│  project.config.json # 项目配置
 │  README.md           # 项目说明
 │
-├─ cloudfunctions      # 云函数
-│   
+├─ cloudfunctions      # 云函数目录
+│   │
+│   └─image-verify     # 图片安全审核
+│
 └─ miniprogram
     │
     ├─components       # 组件
