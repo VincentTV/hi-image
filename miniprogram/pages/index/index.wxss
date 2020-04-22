@@ -27,7 +27,7 @@
 }
 .preview .original-wrap {
   width: 600rpx;
-  height: 600rpx;
+  max-height: 600rpx;
 }
 .preview .crop-wrap {
   display: flex;

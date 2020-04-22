@@ -1,49 +1,79 @@
 // miniprogram/pages/index/index.js
 import { promisifyAll } from 'miniprogram-api-promise';
+const wxp = {}
+promisifyAll(wx, wxp)
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    originalPath: ''
+    originalPath: '',   // 原图地址
+    cropItemPaths: []   // 裁剪后地址数组
   },
 
   upload: function () {
-    const wxp = {}
-    promisifyAll(wx, wxp)
+    let cloudPath = ''
+    let fileID = ''
+    let sizes = ['50x50', '150x100', '80x45']
     wxp
       // 选择图片
       .chooseImage({ count: 1 })
       // 图片上传云存储
       .then(res=>{
-        const cloudFile = Math.floor(Math.random() * 1000000) + /\.[^\.]+$/.exec(res.tempFilePaths[0])
+        let filename = Math.floor(Math.random() * 1000000) + /\.[^\.]+$/.exec(res.tempFilePaths[0])
+        cloudPath = 'original-images/' + filename
+        wx.showLoading({
+          title: '加载中',
+        })
         return wx.cloud.uploadFile({
-          cloudPath: `original-images/${cloudFile}`,
+          cloudPath,
           filePath: res.tempFilePaths[0]
         })
       })
-      // 图片显示
+      // 上传成功，提交审核图片
       .then(res => {
-        wx.showToast({
-          title: '上传成功',
-          icon: 'success',
-          duration: 1500
+        fileID = res.fileID
+        return wxp.cloud.callFunction({
+          name: 'image-verify',
+          data: {
+            cloudPath
+          }
         })
-        this.setData({
-          originalPath: res.fileID
+      })
+      // 审核通过，获取文件链接
+      .then(res => {
+        const { PornInfo, TerroristInfo, PoliticsInfo } = res.result
+        const verified = PornInfo.Code || TerroristInfo.Code || PoliticsInfo.Code
+        if (verified === 0) {
+          this.setData({
+            originalPath: fileID
+          })
+        } else {
+          throw new Error('图片审核失败')
+        }
+        return wxp.cloud.getTempFileURL({
+          fileList: [ fileID ]
         })
+      })
+      // 裁剪图片
+      .then(res => {
+        let tempFileURL = res.fileList[0].tempFileURL
+        let cropItemPaths = []
+        sizes.forEach(item => {
+          cropItemPaths.push(tempFileURL + '?imageMogr2/scrop/' + item)
+        })
+        this.setData({ cropItemPaths })
+        wx.hideLoading()
       })
       .catch(err => {
-        console.error(err)
+        console.log(err)
+        this.setData({
+          originalPath: '',
+          cropItemPaths: []
+        })
       })
-
-  },
-
-  display() {
-    this.setData({
-      successToast: true
-    })
   },
 
   /**
