@@ -28,6 +28,7 @@
 .preview .original-wrap {
   width: 600rpx;
   max-height: 600rpx;
+  overflow: hidden;
 }
 .preview .crop-wrap {
   display: flex;
